@@ -4,6 +4,7 @@
 #include <windows.h>
 using namespace std;
 
+// Deletes moves that are already performed
 void removemove(int compmoves[], int movenos, int element) {
   int pos;
   for (int j = 0; j < movenos; j++) {
@@ -18,12 +19,14 @@ void removemove(int compmoves[], int movenos, int element) {
   }
 }
 
+// The computer selects a random move from the remaining moves
 int computermove(int compmoves[], int movenos) {
   srand((unsigned int)(time(NULL)));
   int move = rand() % movenos;
   return compmoves[move];
 }
 
+// Checks for winning condition of the rows
 bool row(char layout[][4]) {
   for (int i = 1; i < 4; i++) {
     if (layout[i][1] == layout[i][2] && layout[i][2] == layout[i][3] &&
@@ -34,6 +37,7 @@ bool row(char layout[][4]) {
   return false;
 }
 
+// Checks for winning condition of the columns
 bool column(char layout[][4]) {
   for (int i = 1; i < 4; i++) {
     if (layout[1][i] != NULL && layout[1][i] == layout[2][i] &&
@@ -44,6 +48,7 @@ bool column(char layout[][4]) {
   return false;
 }
 
+// Checks for winning condition of the diagonal
 bool diagonal(char layout[][4]) {
   if (layout[1][1] != NULL && layout[1][1] == layout[2][2] &&
       layout[2][2] == layout[3][3]) {
@@ -55,58 +60,81 @@ bool diagonal(char layout[][4]) {
   return false;
 }
 
+// Checks for all conditions and tells whether any player has won
 bool win(char layout[][4]) {
   return (row(layout) || column(layout) || diagonal(layout));
 }
+
 // Function to show the board layout
-void showlayout(char layout[][4], int temp, int p1sym, int p2sym, int comp) {
+void showlayout(char layout[][4], int temp, int psym, int comp) {
   system("CLS");
   char symp1, symp2;
   if (temp) {
-    cout << "The board layout\n";
+    cout << "\n\n\n\n\n\n\n\t\t\t\t\t\t The board layout\n";
   }
   if (comp) {
-    if (p1sym == 1) {
+    if (psym == 1) {
       symp1 = 'X';
       symp2 = 'O';
     } else {
       symp1 = 'O';
       symp2 = 'X';
     }
-    cout << "Player : " << symp1;
-    cout << "\nComputer : " << symp2 << endl;
+    if (temp) {
+      cout << "\n\t\t\t\t\t\t   Player : " << symp1;
+      cout << "\n\t\t\t\t\t\t  Computer : " << symp2 << "\n\n";
+    } else {
+      cout << "\n\n\n\n\n\n\n\t\t\t\t\t\t   Tic-Tac-Toe\n";
+      cout << "\n\t\t\t\t\t\t  Player : " << symp1;
+      cout << "\n\t\t\t\t\t\t Computer : " << symp2 << "\n\n";
+    }
   } else {
-    if (p1sym == 1) {
+    if (psym == 1) {
       symp1 = 'X';
       symp2 = 'O';
     } else {
       symp1 = 'O';
       symp2 = 'X';
     }
-    cout << "Player 1 : " << symp1;
-    cout << "\nPlayer 2 : " << symp2 << endl;
+    if (temp) {
+      cout << "\n\t\t\t\t\t\t  Player 1 : " << symp1;
+      cout << "\n\t\t\t\t\t\t  Player 2 : " << symp2 << "\n\n";
+    } else {
+      cout << "\n\n\n\n\n\n\n\t\t\t\t\t\t   Tic-Tac-Toe\n";
+      cout << "\n\t\t\t\t\t\t  Player 1 : " << symp1;
+      cout << "\n\t\t\t\t\t\t  Player 2 : " << symp2 << "\n\n";
+    }
   }
-  cout << "     |     |     "
+  cout << "\t\t\t\t\t\t"
+       << "     |     |     "
        << "\n";
-  cout << "  " << layout[1][1] << "  |  " << layout[1][2] << "  |  "
+  cout << "\t\t\t\t\t\t"
+       << "  " << layout[1][1] << "  |  " << layout[1][2] << "  |  "
        << layout[1][3] << "\n";
-  cout << "_____|_____|_____"
+  cout << "\t\t\t\t\t\t"
+       << "_____|_____|_____"
        << "\n";
-  cout << "     |     |     "
+  cout << "\t\t\t\t\t\t"
+       << "     |     |     "
        << "\n";
-  cout << "  " << layout[2][1] << "  |  " << layout[2][2] << "  |  "
+  cout << "\t\t\t\t\t\t"
+       << "  " << layout[2][1] << "  |  " << layout[2][2] << "  |  "
        << layout[2][3] << "\n";
-  cout << "_____|_____|_____"
+  cout << "\t\t\t\t\t\t"
+       << "_____|_____|_____"
        << "\n";
-  cout << "     |     |     "
+  cout << "\t\t\t\t\t\t"
+       << "     |     |     "
        << "\n";
-  cout << "  " << layout[3][1] << "  |  " << layout[3][2] << "  |  "
+  cout << "\t\t\t\t\t\t"
+       << "  " << layout[3][1] << "  |  " << layout[3][2] << "  |  "
        << layout[3][3] << "\n";
-  cout << "     |     |     "
+  cout << "\t\t\t\t\t\t"
+       << "     |     |     "
        << "\n"
        << "\n";
   if (temp) {
-    cout << "The game will begin shortly";
+    cout << "\t\t\t\t\t   The game will begin shortly";
     Sleep(600);
     cout << ".";
     Sleep(600);
@@ -117,24 +145,25 @@ void showlayout(char layout[][4], int temp, int p1sym, int p2sym, int comp) {
   }
 }
 
-void playgame(char layout[][4], int choice, int p1sym, int p2sym) {
+// Function that controls the gameplay
+void playgame(char layout[][4], int choice, int psym, int player) {
   system("CLS");
-  int input, player = 1, compmoves[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9}, moves = 0,
+  int input, compmoves[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9}, moves = 0,
              movenos = 9;
   char symbolpos[4][4] = {NULL}, symbolplayerone, symbolplayertwo;
-  if (p1sym == 1) {
+  if (psym == 1) {
     symbolplayerone = 'X';
     symbolplayertwo = 'O';
-  } else {
+  } else if (psym == 2) {
     symbolplayerone = 'O';
     symbolplayertwo = 'X';
   }
   if (choice == 1) {
-    showlayout(symbolpos, 0, p1sym, p2sym, 1);
     while (!win(symbolpos) && moves != 9) {
       if (player == 1) {
       a:
-        cout << "Enter position : ";
+        showlayout(symbolpos, 0, psym, 1);
+        cout << "\t\t\t\t\t\tEnter position : ";
         cin >> input;
         for (int i = 1; i < 4; i++) {
           for (int j = 1; j < 4; j++) {
@@ -145,8 +174,10 @@ void playgame(char layout[][4], int choice, int p1sym, int p2sym) {
                 removemove(compmoves, movenos, input);
                 movenos--;
                 moves++;
-                showlayout(symbolpos, 0, p1sym, p2sym, 1);
+                showlayout(symbolpos, 0, psym, 1);
               } else {
+                cout << "\t\t\t\t\t\tEnter Valid Position";
+                Sleep(1000);
                 goto a;
               }
             }
@@ -154,6 +185,7 @@ void playgame(char layout[][4], int choice, int p1sym, int p2sym) {
         }
       } else if (player == 0) {
       b:
+        showlayout(symbolpos, 0, psym, 1);
         input = computermove(compmoves, movenos);
         for (int i = 1; i < 4; i++) {
           for (int j = 1; j < 4; j++) {
@@ -164,7 +196,7 @@ void playgame(char layout[][4], int choice, int p1sym, int p2sym) {
                 removemove(compmoves, movenos, input);
                 movenos--;
                 moves++;
-                showlayout(symbolpos, 0, p1sym, p2sym, 1);
+                showlayout(symbolpos, 0, psym, 1);
               } else {
                 goto b;
               }
@@ -174,31 +206,33 @@ void playgame(char layout[][4], int choice, int p1sym, int p2sym) {
       }
     }
     if (!win(symbolpos) && moves == 9) {
-      cout << "It's a draw";
+      cout << "\t\t\t\t\t\tIt's a draw!!!";
     } else {
       if (player == 0) {
-        cout << "You Win!!!";
+        cout << "\t\t\t\t\t\t    You Win!!!";
       } else {
-        cout << "Computer Wins!!!";
+        cout << "\t\t\t\t\t\t  Computer Wins!!!";
       }
     }
   } else {
-    showlayout(symbolpos, 0, p1sym, p2sym, 0);
     while (!win(symbolpos) && moves != 9) {
       if (player == 1) {
       a1:
-        cout << "Player 1's turn\n";
-        cout << "Enter position : ";
+        showlayout(symbolpos, 0, psym, 0);
+        cout << "\t\t\t\t\t\tPlayer 1's turn\n";
+        cout << "\t\t\t\t\t\tEnter position : ";
         cin >> input;
         for (int i = 1; i < 4; i++) {
           for (int j = 1; j < 4; j++) {
             if (layout[i][j] == input + '0') {
               if (symbolpos[i][j] == NULL) {
-                symbolpos[i][j] = 'X';
+                symbolpos[i][j] = symbolplayerone;
                 player--;
                 moves++;
-                showlayout(symbolpos, 0, p1sym, p2sym, 0);
+                showlayout(symbolpos, 0, psym, 0);
               } else {
+                cout << "\t\t\t\t\t\tEnter Valid Position";
+                Sleep(1000);
                 goto a1;
               }
             }
@@ -206,18 +240,21 @@ void playgame(char layout[][4], int choice, int p1sym, int p2sym) {
         }
       } else if (player == 0) {
       b1:
-        cout << "Player 2's turn\n";
-        cout << "Enter Position : ";
+        showlayout(symbolpos, 0, psym, 0);
+        cout << "\t\t\t\t\t\tPlayer 2's turn\n";
+        cout << "\t\t\t\t\t\tEnter Position : ";
         cin >> input;
         for (int i = 1; i < 4; i++) {
           for (int j = 1; j < 4; j++) {
             if (layout[i][j] == input + '0') {
               if (symbolpos[i][j] == NULL) {
-                symbolpos[i][j] = 'O';
+                symbolpos[i][j] = symbolplayertwo;
                 player++;
                 moves++;
-                showlayout(symbolpos, 0, p1sym, p2sym, 0);
+                showlayout(symbolpos, 0, psym, 0);
               } else {
+                cout << "\t\t\t\t\t\tEnter Valid Position";
+                Sleep(1000);
                 goto b1;
               }
             }
@@ -226,19 +263,19 @@ void playgame(char layout[][4], int choice, int p1sym, int p2sym) {
       }
     }
     if (!win(symbolpos) && moves == 9) {
-      cout << "It's a draw!!!";
+      cout << "\t\t\t\t\t\tIt's a draw!!!";
     } else {
       if (player == 0) {
-        cout << "Player 1 Wins!!!";
+        cout << "\t\t\t\t\t\tPlayer 1 Wins!!!";
       } else {
-        cout << "Player 2 Wins!!!";
+        cout << "\t\t\t\t\t\tPlayer 2 Wins!!!";
       }
     }
   }
 }
 
-// Function to initialize positions on the board
-void initialize(int choice, int p1sym, int p2sym, int comp) {
+// Function to initialize positions on the board and to start the game
+void initialize(int choice, int psym, int comp, int player) {
   char layout[4][4];
   int c = 1, i, j;
 
@@ -250,43 +287,72 @@ void initialize(int choice, int p1sym, int p2sym, int comp) {
       cout << layout[i][j] << "\n";
     }
   }
-  showlayout(layout, 1, p1sym, p2sym, comp);
-  playgame(layout, choice, p1sym, p2sym);
+  showlayout(layout, 1, psym, comp);
+  playgame(layout, choice, psym, player);
 }
 
 int main() {
-  int choice, p1sym = 0, p2sym = 0;
+  // Main function handles the player modes and initializes the game
+  int choice, psym = 0, player = 2;
+  char ch, ch1;
 inp:
   system("CLS");
-  cout << "1. Single Player\n2. Multi-Player\nEnter your choice : ";
+  cout << "\n\n\n\n\n\n\n\t\t\t\t\t\t     Tic-Tac-Toe\n\n\t\t\t\t\t\t  1. "
+          "Single "
+          "Player\n\n\t\t\t\t\t\t  2. "
+          "Multi-Player\n\n\t\t\t\t\t\tEnter your choice : ";
   cin >> choice;
   switch (choice) {
   case 1:
-    cout << "\n1. X\n2. O";
   askagain:
-    cout << "\nChoose a symbol 'X' or 'O' : ";
-    cin >> p1sym;
-    switch (p1sym) {
-    case 1:
-      cout << "You have chosen X";
-      initialize(choice, p1sym, p2sym, 1);
-      break;
-    case 2:
-      cout << "You have chosen O";
-      initialize(choice, p1sym, p2sym, 1);
-      break;
-    default:
-      cout << "Choose a valid option";
+    cout << "\n\t\t\t\t\t     Choose a symbol 'X' or 'O' : ";
+    cin >> ch;
+    if (ch == 'x' || ch == 'X') {
+      cout << "\n\t\t\t\t\t\t   You have chosen X\n";
+      psym = 1;
+    c:
+      cout << "\n\t\t\t\t\tDo you want to start first ? (Y / N) : ";
+      cin >> ch1;
+      if (ch1 == 'Y' || ch1 == 'y') {
+        player = 1;
+        initialize(choice, psym, 1, player);
+      } else if (ch1 == 'N' || ch1 == 'n') {
+        player = 0;
+        initialize(choice, psym, 1, player);
+      } else {
+        cout << "\n\t\t\t\t\t\t   Invalid Choice\n";
+        goto c;
+      }
+    } else if (ch == 'o' || ch == 'O') {
+      cout << "\n\t\t\t\t\t\t   You have chosen O\n";
+      psym = 2;
+    d:
+      cout << "\n\t\t\t\t\tDo you want to start first ? (Y / N) : ";
+      cin >> ch1;
+      if (ch1 == 'Y' || ch1 == 'y') {
+        player = 1;
+        initialize(choice, psym, 1, player);
+      } else if (ch1 == 'N' || ch1 == 'n') {
+        player = 0;
+        initialize(choice, psym, 1, player);
+      } else {
+        cout << "\n\t\t\t\t\t\t   Invalid Choice\n";
+        goto d;
+      }
+    } else {
+      cout << "\t\t\t\t\t\tChoose a valid option\n";
       Sleep(1000);
       goto askagain;
-      break;
     }
     break;
   case 2:
-    initialize(choice, p1sym, p2sym, 0);
+    srand((unsigned int)(time(NULL)));
+    psym = (rand() % (2)) + 1;
+    player = rand() % 2;
+    initialize(choice, psym, 0, player);
     break;
   default:
-    cout << "Enter a valid choice";
+    cout << "\n\t\t\t\t\t\tEnter a valid choice";
     Sleep(1000);
     goto inp;
     break;
